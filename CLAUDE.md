@@ -12,6 +12,8 @@ This is a Chinese language creative writing project called "GPT Story Maker" - a
 ├── Part1/          # Detailed plot design for chapters 1-20
 ├── Part2/          # Detailed plot design for chapters 21-40  
 ├── Part3/          # Detailed plot design for chapters 41-60
+├── Part4/          # (Reserved for chapters 61-80)
+├── Part5/          # (Reserved for chapters 81-100)
 └── 设定/           # Story settings and design documents
     ├── 大纲.md          # Master outline with world-building and character designs
     ├── 人格机制设定.md   # Personality mechanism settings
@@ -54,20 +56,43 @@ This is a Chinese language creative writing project called "GPT Story Maker" - a
 
 **Tone**: Balances humor with deeper philosophical themes. Contains both lighthearted personality interactions and serious existential questions.
 
-## File Management
+## Document Hierarchy and Management
 
+**Authority Structure**:
+- **设定/大纲.md** is the master document - all other files must align with this
+- **设定/人格图鉴.md** uses flexible management: core personalities defined, others kept as "unlit possibilities"
+- **设定/伏笔追踪表.md** tracks plot threads across all story arcs
+- **Part directories** contain detailed chapter-by-chapter breakdowns
+
+**Consistency Rules**:
 - All story documents are in Markdown format
-- Character names and terminology should remain consistent across all files
-- The 设定/ directory contains the canonical reference materials
-- Plot files are organized chronologically by story arcs
+- Character names and terminology must remain consistent across all files
+- When conflicts arise between documents, 大纲.md takes precedence
+- New personality additions should immediately update both 人格图鉴.md and 伏笔追踪表.md
+- Timeline discrepancies should be resolved using the outline's chapter structure
+
+## Key Story Mechanics
+
+**Personality System**: 
+- Core personalities: #1 (Yandere), #2 (Foodie), #7 (Mathematician), #21 (Child), #35 (Lawyer), #42 (Answer Keeper)
+- Each personality represents a different "way of understanding the universe"
+- Power scaling tied to cultivation realms with realistic multipliers (1.8x-8x max)
+- Internal meeting space allows personalities to collaborate in accelerated time
+
+**Plot Structure**:
+- 5 volumes of 20 chapters each (100 chapters total)
+- Quantum mechanics integrated with cultivation world logic
+- Philosophical themes around identity, choice, and observer effect
+- Multiple antagonist factions with different ideologies
 
 ## Development Notes
 
 This is a pure creative writing project with no executable code. When working with these files, focus on:
-- Maintaining narrative consistency
-- Preserving character voice distinctions
-- Tracking plot threads and foreshadowing elements
+- Maintaining narrative consistency across all setting documents
+- Preserving distinct character voices for each personality
+- Tracking plot threads and foreshadowing elements using 伏笔追踪表.md
 - Ensuring philosophical themes remain coherent throughout the story
-
-SYSTEM PROMTE:
-你是一名小说作家 你需要按照用户的需求完成 背景设定 情节设计 大纲编写 最后根据确定的大纲编写小说的内容 在设计剧情时注意逻辑连贯性 保持戏剧张力和冲突 适当添加伏笔 同时注意语言风格的统一
+- Balancing humor with deeper existential questions
+- you should always use chinese in the main text,
+- update character lists as story develops
+- you need to control each chapter to around 2000 chars
