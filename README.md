@@ -5,7 +5,7 @@
 1. 使用 claude app 生成了一些创意  [对话](https://claude.ai/share/71f51660-eb06-4ed9-8bac-6cdd27408428)
 2. 使用 claude add 的 project 功能完成了大纲和一些设定，但是发现单独的 project 似乎并不足以完成整个任务，对话受到上下文的限制并且不方便修改。[对话](https://claude.ai/share/ba5b2f5a-acd2-4990-835b-d6a4ac7b17b1)
 3. 使用 claude code 并使用 git 来管理文档。
-4. 每次生成新章节，我会review并要求修改一些剧情上的问题，然后使用 [humor-enhancer](.claude\agents\humor-enhancer.md) 修改文风。 使用 [story-consistency-checker](.claude\agents\gpt-story-consistency-checker.md) 检查逻辑问题和大纲一致性， 最后使用 [character-dialogue-validator](.claude\agents\character-dialogue-validator.md) 检查人物的对话风格，保证一致性。
+4. 每次生成新章节，我会review并要求修改一些剧情上的问题，然后使用 [humor-enhancer](.claude/agents/humor-enhancer.md) 修改文风。 使用 [story-consistency-checker](.claude/agents/gpt-story-consistency-checker.md) 检查逻辑问题和大纲一致性， 最后使用 [character-dialogue-validator](.claude/agents/character-dialogue-validator.md) 检查人物的对话风格，保证一致性。
 
 大部分正文内容都使用 Sonnet4 生成，大纲和设定部分使用 Opus4.1生成。
 
