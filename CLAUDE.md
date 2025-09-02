@@ -97,3 +97,13 @@ This is a pure creative writing project with no executable code. When working wi
 - update character lists as story develops
 - you need to control each chapter to above 2000 chars
 - 注意剧情节奏，在章节之间保留适当悬念，提起读者阅读欲望
+
+### Chapter Title Guidelines:
+  - Avoid repetitive "XX的XX" (XX's XX) format
+  - Use varied, concise titles that capture the essence
+  - Examples of good formats:
+    - Simple nouns: "观心镜" (Observation Mirror)
+    - Emotional states: "温暖日常" (Warm Daily Life)
+    - Single concepts: "监视" (Surveillance)
+    - Action words: "融合"、"觉醒"、"突破"
+    - Suspenseful: "真相"、"选择"、"代价"
