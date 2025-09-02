@@ -93,10 +93,10 @@ This is a pure creative writing project with no executable code. When working wi
 - Tracking plot threads and foreshadowing elements using 伏笔追踪表.md
 - Ensuring philosophical themes remain coherent throughout the story
 - Balancing humor with deeper existential questions
-- you should always use chinese in the main text,
-- update character lists as story develops
-- you need to control each chapter to above 2000 chars
-- 注意剧情节奏，在章节之间保留适当悬念，提起读者阅读欲望
+- You should always use chinese in the main text
+- Update character lists as story develops
+- You need to control each chapter to above 2000 words
+- Pay attention to the plot's pacing, maintain appropriate suspense between chapters, and arouse the reader's desire to read
 
 ### Chapter Title Guidelines:
   - Avoid repetitive "XX的XX" (XX's XX) format
