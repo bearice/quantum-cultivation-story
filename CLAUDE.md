@@ -18,7 +18,9 @@ This is a Chinese language creative writing project called "GPT Story Maker" - a
     ├── 大纲.md          # Master outline with world-building and character designs
     ├── 人格机制设定.md   # Personality mechanism settings
     ├── 人格图鉴.md       # Character personality profiles  
+    ├── 人物档案.md       # Character development tracking
     ├── 伏笔追踪表.md     # Foreshadowing tracking table
+    └── 背景势力设定.md   # Faction and power structure definitions
 ```
 
 ## Story Architecture
@@ -62,7 +64,8 @@ This is a Chinese language creative writing project called "GPT Story Maker" - a
 - **设定/大纲.md** is the master document - all other files must align with this
 - **设定/人格图鉴.md** uses flexible management: core personalities defined, others kept as "unlit possibilities"
 - **设定/伏笔追踪表.md** tracks plot threads across all story arcs
-- **Part directories** contain detailed chapter-by-chapter breakdowns
+- **设定/背景势力设定.md** defines faction relationships and power structures
+- **Vol directories** contain detailed chapter-by-chapter breakdowns (updated from Part structure)
 
 **Consistency Rules**:
 - All story documents are in Markdown format
@@ -85,6 +88,22 @@ This is a Chinese language creative writing project called "GPT Story Maker" - a
 - Philosophical themes around identity, choice, and observer effect
 - Multiple antagonist factions with different ideologies
 
+## AI-Assisted Workflow
+
+This project uses specialized AI agents for quality assurance:
+
+**Available Agents**:
+- `humor-enhancer`: Adds comedic elements while preserving plot progression
+- `gpt-story-consistency-checker`: Validates story consistency against master settings
+- `character-dialogue-validator`: Ensures character dialogue matches personality profiles
+
+**Quality Assurance Process**:
+1. Generate/modify story content
+2. Review and request plot/character adjustments
+3. Use humor-enhancer for tone balancing
+4. Run story-consistency-checker for logical validation
+5. Apply character-dialogue-validator for voice consistency
+
 ## Development Notes
 
 This is a pure creative writing project with no executable code. When working with these files, focus on:
@@ -97,6 +116,8 @@ This is a pure creative writing project with no executable code. When working wi
 - Update character lists as story develops
 - You need to control each chapter to above 2000 words
 - Pay attention to the plot's pacing, maintain appropriate suspense between chapters, and arouse the reader's desire to read
+
+**System009 Dialogue Format**: Must use 【】brackets instead of quotation marks for system communications
 
 ### Chapter Title Guidelines:
   - Avoid repetitive "XX的XX" (XX's XX) format
