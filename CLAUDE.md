@@ -9,11 +9,11 @@ This is a Chinese language creative writing project called "GPT Story Maker" - a
 ## Repository Structure
 
 ```
-├── Part1/          # Detailed plot design for chapters 1-20
-├── Part2/          # Detailed plot design for chapters 21-40  
-├── Part3/          # Detailed plot design for chapters 41-60
-├── Part4/          # (Reserved for chapters 61-80)
-├── Part5/          # (Reserved for chapters 81-100)
+├── Vol1/          # Detailed plot design for chapters 1-20
+├── Vol2/          # Detailed plot design for chapters 21-40  
+├── Vol3/          # Detailed plot design for chapters 41-60
+├── Vol4/          # (Reserved for chapters 61-80)
+├── Vol5/          # (Reserved for chapters 81-100)
 └── 设定/           # Story settings and design documents
     ├── 大纲.md          # Master outline with world-building and character designs
     ├── 人格机制设定.md   # Personality mechanism settings

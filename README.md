@@ -35,11 +35,11 @@ This story is created through collaboration between human creativity and AI assi
 ## 🏗️ Project Structure
 
 ```
-├── Part1/          # Chapters 1-20: Adaptation and Awakening
-├── Part2/          # Chapters 21-40: Growth and Discovery  
-├── Part3/          # Chapters 41-60: Challenges and Evolution
-├── Part4/          # (Reserved for chapters 61-80)
-├── Part5/          # (Reserved for chapters 81-100)
+├── Vol1/          # Chapters 1-20: Adaptation and Awakening
+├── Vol2/          # Chapters 21-40: Growth and Discovery  
+├── Vol3/          # Chapters 41-60: Challenges and Evolution
+├── Vol4/          # (Reserved for chapters 61-80)
+├── Vol5/          # (Reserved for chapters 81-100)
 └── 设定/           # Story settings and design documents
     ├── 大纲.md          # Master outline and world-building
     ├── 人格机制设定.md   # Personality mechanism settings
