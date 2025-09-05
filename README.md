@@ -5,7 +5,7 @@
 1. 使用 claude app 生成了一些创意  [对话](脑洞/original-dialogue.md)
 2. 使用 claude add 的 project 功能完成了大纲和一些设定，但是发现单独的 project 似乎并不足以完成整个任务，对话受到上下文的限制并且不方便修改。[对话](https://claude.ai/share/ba5b2f5a-acd2-4990-835b-d6a4ac7b17b1)
 3. 使用 claude code 并使用 git 来管理文档。
-4. 每次生成新章节，我会review并要求修改一些剧情上的问题，然后使用 [humor-enhancer](.claude/agents/humor-enhancer.md) 修改文风。 使用 [story-consistency-checker](.claude/agents/gpt-story-consistency-checker.md) 检查逻辑问题和大纲一致性， 最后使用 [character-dialogue-validator](.claude/agents/character-dialogue-validator.md) 检查人物的对话风格，保证一致性。
+4. 每次生成新章节，我会review并要求修改一些剧情上的问题，然后使用 [comprehensive-story-checker](.claude/agents/comprehensive-story-checker.md) 进行综合质量检查，包括：设定合规性、人物真实性、叙事连贯性验证以及文风和幽默元素的平衡调整。
 
 大部分正文内容都使用 Sonnet4 生成，大纲和设定部分使用 Opus4.1生成。
 
@@ -67,8 +67,8 @@ This story is created through collaboration between human creativity and AI assi
 ## 🔧 Technical Features
 
 ### AI-Assisted Development
-- **Consistency Checking**: Custom AI agent for story continuity validation
-- **Character Development**: AI-guided personality trait maintenance
+- **Comprehensive Story Checking**: Integrated AI agent for complete quality validation (settings compliance, character authenticity, narrative coherence)
+- **Character Development**: AI-guided personality trait maintenance with voice consistency validation
 - **World-Building**: Systematic approach to cultivation mechanics and power scaling
 - **Plot Thread Tracking**: Automated foreshadowing and subplot management
 
@@ -104,10 +104,11 @@ This story is created through collaboration between human creativity and AI assi
 
 ## 🔍 Quality Metrics
 
-- **Story Consistency**: Validated by custom AI consistency checker
-- **Character Development**: Tracked across multiple story arcs
+- **Story Consistency**: Validated by comprehensive AI story checker (3-tier validation system)
+- **Character Development**: Tracked across multiple story arcs with personality authenticity verification
 - **Plot Thread Management**: Systematic foreshadowing table maintenance
 - **Pacing Control**: Chapter length targets (2000+ characters per chapter)
+- **Narrative Coherence**: Scene transitions and plot logic validation
 
 ## 📚 Reading Order
 
