@@ -15,6 +15,7 @@ This is a Chinese language creative writing project called "GPT Story Maker" - a
 ├── Vol4/          # (Reserved for chapters 61-80)
 ├── Vol5/          # (Reserved for chapters 81-100)
 └── 设定/           # Story settings and design documents
+    ├── 写作规范.md       # Centralized writing standards and style guidelines (PRIORITY)
     ├── 大纲.md          # Master outline with world-building and character designs
     ├── 人格机制设定.md   # Personality mechanism settings
     ├── 人格图鉴.md       # Character personality profiles  
@@ -61,16 +62,18 @@ This is a Chinese language creative writing project called "GPT Story Maker" - a
 ## Document Hierarchy and Management
 
 **Authority Structure**:
-- **设定/大纲.md** is the master document - all other files must align with this
-- **设定/人格图鉴.md** uses flexible management: core personalities defined, others kept as "unlit possibilities"
-- **设定/伏笔追踪表.md** tracks plot threads across all story arcs
-- **设定/背景势力设定.md** defines faction relationships and power structures
-- **Vol directories** contain detailed chapter-by-chapter breakdowns (updated from Part structure)
+- **设定/写作规范.md** - Centralized writing standards and style guidelines (PRIMARY reference for all writing rules)
+- **设定/大纲.md** - Master story outline and world-building (takes precedence for plot/setting conflicts)  
+- **设定/人格图鉴.md** - Character personality profiles with flexible management
+- **设定/伏笔追踪表.md** - Plot thread and foreshadowing tracking across all story arcs
+- **设定/背景势力设定.md** - Faction relationships and power structures
+- **Vol directories** - Detailed chapter-by-chapter breakdowns
 
 **Consistency Rules**:
-- All story documents are in Markdown format
+- All story documents are in Markdown format  
 - Character names and terminology must remain consistent across all files
-- When conflicts arise between documents, 大纲.md takes precedence
+- Writing standards and style: 设定/写作规范.md takes precedence
+- Plot and world-building conflicts: 设定/大纲.md takes precedence
 - New personality additions should immediately update both 人格图鉴.md and 伏笔追踪表.md
 - Timeline discrepancies should be resolved using the outline's chapter structure
 
@@ -90,19 +93,20 @@ This is a Chinese language creative writing project called "GPT Story Maker" - a
 
 ## AI-Assisted Workflow
 
-This project uses specialized AI agents for quality assurance:
+This project uses a specialized AI agent for comprehensive quality assurance:
 
-**Available Agents**:
-- `humor-enhancer`: Adds comedic elements while preserving plot progression
-- `gpt-story-consistency-checker`: Validates story consistency against master settings
-- `character-dialogue-validator`: Ensures character dialogue matches personality profiles
+**Available Agent**:
+- `comprehensive-story-checker`: Unified quality validation system that performs:
+  - Settings compliance verification (against 设定/大纲.md and 设定/写作规范.md)
+  - Character authenticity checking (dialogue consistency, personality voices)
+  - Narrative coherence validation (scene transitions, plot logic)
+  - Humor/philosophy balance assessment
 
 **Quality Assurance Process**:
 1. Generate/modify story content
-2. Review and request plot/character adjustments
-3. Use humor-enhancer for tone balancing
-4. Run story-consistency-checker for logical validation
-5. Apply character-dialogue-validator for voice consistency
+2. Review and request plot/character adjustments  
+3. Use comprehensive-story-checker for complete validation
+4. Agent automatically reads latest standards from 设定/写作规范.md before each check
 
 ## Development Notes
 
@@ -118,14 +122,18 @@ This is a pure creative writing project with no executable code. When working wi
 - Pay attention to the plot's pacing, maintain appropriate suspense between chapters, and arouse the reader's desire to read
 - **数字使用规范**：人格编号统一使用中文数字（小一、小二、小七、二十一号、三十五号、四十二号），不使用阿拉伯数字
 
-**System009 Dialogue Format**: Must use 【】brackets instead of quotation marks for system communications
+## Writing Standards Reference
 
-### Chapter Title Guidelines:
-  - Avoid repetitive "XX的XX" (XX's XX) format
-  - Use varied, concise titles that capture the essence
-  - Examples of good formats:
-    - Simple nouns: "观心镜" (Observation Mirror)
-    - Emotional states: "温暖日常" (Warm Daily Life)
-    - Single concepts: "监视" (Surveillance)
-    - Action words: "融合"、"觉醒"、"突破"
-    - Suspenseful: "真相"、"选择"、"代价"
+**⚠️ CRITICAL**: Always refer to `设定/写作规范.md` for complete and current writing standards. Key points:
+
+- **System009 Dialogue Format**: 系统009【对话内容】 (no quotation marks)
+- **Character Nicknames**: Other characters may call system "系统" or "009" in dialogue  
+- **Personality Numbers**: Use Chinese numerals (小一、小二、小七、二十一号、三十五号、四十二号)
+- **Language Rules**: 
+  - Lin Wanwan: Modern terms internally, cultivation terms externally
+  - Cultivation world characters: Strict Daoist terminology only
+  - Personality #7: Scientific terms with cultivation physics vocabulary
+- **Chapter Requirements**: Minimum 2000 characters, avoid unnecessary metadata
+- **Title Diversity**: Avoid repetitive "XX的XX" format, use varied styles
+
+**Before any writing/editing task**: Read 设定/写作规范.md for latest standards
