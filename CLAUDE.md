@@ -116,6 +116,7 @@ This is a pure creative writing project with no executable code. When working wi
 - Update character lists as story develops
 - You need to control each chapter to above 2000 words
 - Pay attention to the plot's pacing, maintain appropriate suspense between chapters, and arouse the reader's desire to read
+- **数字使用规范**：人格编号统一使用中文数字（小一、小二、小七、二十一号、三十五号、四十二号），不使用阿拉伯数字
 
 **System009 Dialogue Format**: Must use 【】brackets instead of quotation marks for system communications
 
