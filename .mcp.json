@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "story-rag": {
+      "type": "stdio",
+      "command": "uv",
+      "args": ["run","--project" ,"tools", "tools/story_rag_mcp.py"],
+      "env": {}
+    }
+  }
+}

@@ -1,11 +1,11 @@
 {
   "permissions": {
-    "allow": [
-      "Read(/C:\\Users\\bearice\\Workspace\\gpt-story-maker\\设定/**)",
-      "Read(/C:\\Users\\bearice\\Workspace\\gpt-story-maker\\设定/**)",
-      "Read(/C:\\Users\\bearice\\Workspace\\gpt-story-maker\\设定/**)"
-    ],
+    "allow": [],
     "deny": [],
     "ask": []
-  }
+  },
+  "enabledMcpjsonServers": [
+    "story-rag"
+  ],
+  "enableAllProjectMcpServers": true
 }

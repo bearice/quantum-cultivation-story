@@ -1,0 +1,21 @@
+[project]
+name = "story-rag"
+version = "0.1.0"
+description = "本地RAG系统，为GPT Story Maker创作项目提供智能文档检索"
+requires-python = ">=3.8"
+dependencies = [
+    "chromadb>=0.4.0",
+    "ollama>=0.1.7", 
+    "markdown>=3.4.0", 
+    "jieba>=0.42.1"
+]
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages]
+find = {}
+
+[tool.setuptools.package-data]
+"*" = ["py.typed"]

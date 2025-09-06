@@ -1,0 +1,11 @@
+{
+  "name": "story-rag-mcp",
+  "description": "GPT Story Maker 故事知识库搜索服务",
+  "version": "1.0.0",
+  "command": "python",
+  "args": ["story_rag_mcp.py"],
+  "env": {
+    "PYTHONPATH": ".",
+    "PYTHONIOENCODING": "utf-8"
+  }
+}
