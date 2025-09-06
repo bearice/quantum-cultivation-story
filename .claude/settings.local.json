@@ -1,11 +1,15 @@
 {
   "permissions": {
-    "allow": [],
+    "allow": [
+      "mcp__story-rag__search_plot_threads",
+      "mcp__story-rag__search_story_knowledge",
+      "mcp__story-rag__search_character_info"
+    ],
     "deny": [],
     "ask": []
   },
+  "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "story-rag"
-  ],
-  "enableAllProjectMcpServers": true
+  ]
 }
