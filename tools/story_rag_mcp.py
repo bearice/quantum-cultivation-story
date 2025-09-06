@@ -12,13 +12,9 @@ from typing import Any, Dict, List, Optional
 import os
 import traceback
 
-# 编码修复
+# 设置编码环境变量 - 简单方式
 if sys.platform == "win32":
-    import codecs
-    if hasattr(sys.stdout, 'buffer'):
-        sys.stdout = codecs.getwriter('utf-8')(sys.stdout.buffer, 'strict')
-    if hasattr(sys.stderr, 'buffer'):
-        sys.stderr = codecs.getwriter('utf-8')(sys.stderr.buffer, 'strict')
+    os.environ['PYTHONIOENCODING'] = 'utf-8'
 
 try:
     from story_rag_system import StoryRAGSystem
@@ -43,18 +39,31 @@ class StoryRAGMCP:
         self._initialize_rag()
     
     def _initialize_rag(self):
-        """初始化RAG系统"""
-        try:
-            # 确保在正确的工作目录
-            project_root = os.getcwd()
-            if project_root.endswith('tools'):
-                project_root = os.path.dirname(project_root)
-                os.chdir(project_root)
-            
-            self.rag = StoryRAGSystem(project_root=project_root)
-        except Exception as e:
-            print(f"Warning: Failed to initialize RAG system: {e}", file=sys.stderr)
-            self.rag = StoryRAGSystem()  # dummy implementation
+        """延迟初始化RAG系统"""
+        # 延迟初始化，只在第一次使用时创建
+        self.rag = None
+        self.project_root = os.getcwd()
+        if self.project_root.endswith('tools'):
+            self.project_root = os.path.dirname(self.project_root)
+    
+    def _get_rag(self):
+        """获取RAG实例，延迟初始化"""
+        if self.rag is None:
+            try:
+                self.rag = StoryRAGSystem(project_root=self.project_root)
+                print("RAG system initialized", file=sys.stderr)
+            except Exception as e:
+                print(f"Warning: Failed to initialize RAG system: {e}", file=sys.stderr)
+                # 创建dummy实现
+                class DummyRAG:
+                    def search(self, *args, **kwargs):
+                        return [{"content": f"RAG系统未正确初始化: {e}", "metadata": {"file_path": "error"}}]
+                    def search_character(self, *args, **kwargs):
+                        return [{"content": f"RAG系统未正确初始化: {e}", "metadata": {"file_path": "error"}}]
+                    def search_plot_thread(self, *args, **kwargs):
+                        return [{"content": f"RAG系统未正确初始化: {e}", "metadata": {"file_path": "error"}}]
+                self.rag = DummyRAG()
+        return self.rag
     
     def _format_results(self, results: List[Dict]) -> List[Dict[str, Any]]:
         """格式化搜索结果"""
@@ -72,7 +81,8 @@ class StoryRAGMCP:
     async def search_story_knowledge(self, query: str, top_k: int = 5, filter_type: Optional[str] = None) -> Dict[str, Any]:
         """搜索故事知识库"""
         try:
-            results = self.rag.search(query, top_k=top_k, filter_type=filter_type)
+            rag = self._get_rag()
+            results = rag.search(query, top_k=top_k, filter_type=filter_type)
             return {
                 "success": True,
                 "query": query,
@@ -90,7 +100,8 @@ class StoryRAGMCP:
     async def search_character_info(self, character_name: str, top_k: int = 3) -> Dict[str, Any]:
         """搜索角色信息"""
         try:
-            results = self.rag.search_character(character_name, top_k=top_k)
+            rag = self._get_rag()
+            results = rag.search_character(character_name, top_k=top_k)
             return {
                 "success": True,
                 "character": character_name,
@@ -108,7 +119,8 @@ class StoryRAGMCP:
     async def search_plot_threads(self, thread_keyword: str, top_k: int = 5) -> Dict[str, Any]:
         """搜索剧情线索"""
         try:
-            results = self.rag.search_plot_thread(thread_keyword, top_k=top_k)
+            rag = self._get_rag()
+            results = rag.search_plot_thread(thread_keyword, top_k=top_k)
             return {
                 "success": True,
                 "thread_keyword": thread_keyword,
@@ -279,44 +291,101 @@ class MCPServer:
 
 async def main():
     """MCP服务器主函数"""
-    server = MCPServer()
+    import logging
     
-    # 读取stdin输入
-    while True:
-        try:
-            line = await asyncio.get_event_loop().run_in_executor(None, sys.stdin.readline)
-            if not line:
+    # 设置日志
+    logging.basicConfig(
+        level=logging.DEBUG,
+        format='%(asctime)s - MCP - %(levelname)s - %(message)s',
+        handlers=[
+            logging.FileHandler('story_rag_mcp.log', encoding='utf-8'),
+            logging.StreamHandler(sys.stderr)
+        ]
+    )
+    logger = logging.getLogger(__name__)
+    
+    try:
+        logger.info("Starting MCP server initialization...")
+        logger.info(f"Python version: {sys.version}")
+        logger.info(f"Working directory: {os.getcwd()}")
+        logger.info(f"Platform: {sys.platform}")
+        
+        server = MCPServer()
+        logger.info("MCP Server initialized successfully")
+        print("MCP Server ready", file=sys.stderr, flush=True)
+        
+        # 读取stdin输入
+        logger.info("Starting main loop, waiting for stdin input...")
+        while True:
+            try:
+                logger.debug("Waiting for input...")
+                line = input()
+                logger.debug(f"Received input: {line[:100]}...")
+                
+                if not line or line.strip() == "":
+                    logger.debug("Empty line, continuing...")
+                    continue
+                
+                request = json.loads(line)
+                logger.info(f"Processing request: {request.get('method', 'unknown')}")
+                
+                response = await server.handle_request(request)
+                logger.debug(f"Response generated: {str(response)[:200]}...")
+                
+                # 输出响应 - 尝试UTF-8编码输出
+                response_json = json.dumps(response, ensure_ascii=False, separators=(',', ':'))
+                # 直接写入到stdout.buffer以确保UTF-8编码
+                if hasattr(sys.stdout, 'buffer'):
+                    sys.stdout.buffer.write(response_json.encode('utf-8'))
+                    sys.stdout.buffer.write(b'\n')
+                    sys.stdout.buffer.flush()
+                else:
+                    print(response_json, flush=True)
+                logger.debug("Response sent")
+            
+            except EOFError:
+                logger.info("EOF received, shutting down normally")
                 break
-            
-            line = line.strip()
-            if not line:
-                continue
-            
-            request = json.loads(line)
-            response = await server.handle_request(request)
-            
-            # 输出响应
-            print(json.dumps(response, ensure_ascii=False), flush=True)
-        
-        except json.JSONDecodeError as e:
-            error_response = {
-                "jsonrpc": "2.0",
-                "error": {
-                    "code": -32700,
-                    "message": f"Parse error: {str(e)}"
+                
+            except json.JSONDecodeError as e:
+                logger.error(f"JSON decode error: {e}, input: {line}")
+                error_response = {
+                    "jsonrpc": "2.0",
+                    "error": {
+                        "code": -32700,
+                        "message": f"Parse error: {str(e)}"
+                    }
                 }
-            }
-            print(json.dumps(error_response, ensure_ascii=False), flush=True)
-        
-        except Exception as e:
-            error_response = {
-                "jsonrpc": "2.0",
-                "error": {
-                    "code": -32603,
-                    "message": f"Internal error: {str(e)}"
+                error_json = json.dumps(error_response, ensure_ascii=False, separators=(',', ':'))
+                if hasattr(sys.stdout, 'buffer'):
+                    sys.stdout.buffer.write(error_json.encode('utf-8'))
+                    sys.stdout.buffer.write(b'\n')
+                    sys.stdout.buffer.flush()
+                else:
+                    print(error_json, flush=True)
+            
+            except Exception as e:
+                logger.error(f"Error processing request: {e}")
+                logger.error(f"Traceback: {traceback.format_exc()}")
+                error_response = {
+                    "jsonrpc": "2.0",
+                    "error": {
+                        "code": -32603,
+                        "message": f"Internal error: {str(e)}\nTraceback: {traceback.format_exc()}"
+                    }
                 }
-            }
-            print(json.dumps(error_response, ensure_ascii=False), flush=True)
+                error_json = json.dumps(error_response, ensure_ascii=False, separators=(',', ':'))
+                if hasattr(sys.stdout, 'buffer'):
+                    sys.stdout.buffer.write(error_json.encode('utf-8'))
+                    sys.stdout.buffer.write(b'\n')
+                    sys.stdout.buffer.flush()
+                else:
+                    print(error_json, flush=True)
+                
+    except Exception as e:
+        logger.error(f"Fatal error in MCP server: {e}")
+        logger.error(f"Traceback: {traceback.format_exc()}")
+        print(f"FATAL: {e}", file=sys.stderr, flush=True)
 
 
 if __name__ == "__main__":

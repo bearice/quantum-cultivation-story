@@ -7,6 +7,9 @@ import os
 # 强制UTF-8编码
 if sys.platform == "win32":
     os.environ['PYTHONIOENCODING'] = 'utf-8'
+    import codecs
+    sys.stdout = codecs.getwriter('utf-8')(sys.stdout.buffer)
+    sys.stderr = codecs.getwriter('utf-8')(sys.stderr.buffer)
 """
 GPT Story Maker - 本地RAG系统
 使用 Ollama + ChromaDB 为创作项目提供智能文档检索
@@ -138,66 +141,59 @@ class StoryRAGSystem:
         return all_embeddings
     
     def chunk_by_section(self, content: str, file_path: str) -> List[DocumentChunk]:
-        """按章节标题切片"""
+        """按章节标题切片 - 保持完整章节内容"""
+        lines = content.split('\n')
         chunks = []
-        sections = re.split(r'\n(?=#{1,3}\s)', content)
+        current_section = None
+        section_lines = []
+        section_start = 0
         
-        for i, section in enumerate(sections):
-            if not section.strip():
-                continue
+        for i, line in enumerate(lines):
+            if line.startswith('## ') and not line.startswith('### '):  # 只匹配二级标题
+                # 保存前一个章节
+                if current_section and section_lines:
+                    section_content = '\n'.join(section_lines).strip()
+                    if section_content:
+                        chunk_id = self._generate_chunk_id(file_path, len(chunks), current_section)
+                        
+                        chunks.append(DocumentChunk(
+                            content=section_content,
+                            metadata={
+                                "file_path": str(file_path),
+                                "chunk_type": "section",
+                                "section_title": current_section,
+                                "chunk_index": len(chunks),
+                                "start_line": section_start + 1,
+                                "end_line": i,
+                                "file_type": self._get_file_type(file_path)
+                            },
+                            chunk_id=chunk_id
+                        ))
                 
-            # 提取标题
-            title_match = re.match(r'^(#{1,3})\s*(.+)', section)
-            title = title_match.group(2) if title_match else f"Section {i+1}"
-            
-            chunk_id = self._generate_chunk_id(file_path, i, title)
-            
-            chunks.append(DocumentChunk(
-                content=section.strip(),
-                metadata={
-                    "file_path": str(file_path),
-                    "chunk_type": "section",
-                    "section_title": title,
-                    "chunk_index": i,
-                    "file_type": self._get_file_type(file_path)
-                },
-                chunk_id=chunk_id
-            ))
+                # 开始新章节
+                current_section = line[3:].strip()  # 去掉 "## "
+                section_lines = [line]
+                section_start = i
+            else:
+                # 添加到当前章节
+                if current_section is not None:
+                    section_lines.append(line)
         
-        return chunks
-    
-    def chunk_by_paragraph(self, content: str, file_path: str) -> List[DocumentChunk]:
-        """按段落切片（适合章节内容）"""
-        chunks = []
-        
-        # 先按章节分割
-        sections = re.split(r'\n(?=#{1,3}\s)', content)
-        
-        for section_idx, section in enumerate(sections):
-            if not section.strip():
-                continue
-                
-            # 提取章节标题
-            title_match = re.match(r'^(#{1,3})\s*(.+)', section)
-            section_title = title_match.group(2) if title_match else f"Section {section_idx+1}"
-            
-            # 按段落分割（保留对话和描述的完整性）
-            paragraphs = re.split(r'\n\s*\n', section)
-            
-            for para_idx, para in enumerate(paragraphs):
-                if len(para.strip()) < 50:  # 忽略太短的段落
-                    continue
-                
-                chunk_id = self._generate_chunk_id(file_path, section_idx * 100 + para_idx, f"{section_title}_para{para_idx}")
+        # 处理最后一个章节
+        if current_section and section_lines:
+            section_content = '\n'.join(section_lines).strip()
+            if section_content:
+                chunk_id = self._generate_chunk_id(file_path, len(chunks), current_section)
                 
                 chunks.append(DocumentChunk(
-                    content=para.strip(),
+                    content=section_content,
                     metadata={
                         "file_path": str(file_path),
-                        "chunk_type": "paragraph",
-                        "section_title": section_title,
-                        "paragraph_index": para_idx,
-                        "chunk_index": section_idx * 100 + para_idx,
+                        "chunk_type": "section",
+                        "section_title": current_section,
+                        "chunk_index": len(chunks),
+                        "start_line": section_start + 1,
+                        "end_line": len(lines),
                         "file_type": self._get_file_type(file_path)
                     },
                     chunk_id=chunk_id
@@ -205,10 +201,87 @@ class StoryRAGSystem:
         
         return chunks
     
+    def chunk_by_paragraph(self, content: str, file_path: str) -> List[DocumentChunk]:
+        """按段落切片（适合章节内容）"""
+        chunks = []
+        lines = content.split('\n')
+        
+        # 先按章节分割
+        sections = re.split(r'\n(?=#{1,3}\s)', content)
+        
+        current_line = 1
+        for section_idx, section in enumerate(sections):
+            if not section.strip():
+                current_line += section.count('\n') + 1
+                continue
+                
+            # 提取章节标题
+            title_match = re.match(r'^(#{1,3})\s*(.+)', section)
+            section_title = title_match.group(2) if title_match else f"Section {section_idx+1}"
+            section_start_line = current_line
+            
+            # 章节内容按段落分割（保留对话和描述的完整性）
+            paragraphs = re.split(r'\n\s*\n', section)
+            
+            para_start_line = section_start_line
+            for para_idx, para in enumerate(paragraphs):
+                if len(para.strip()) < 50:  # 提高最小长度要求，避免太短的切片
+                    para_start_line += para.count('\n') + 2  # +2 for paragraph separator
+                    continue
+                
+                # 计算段落的行号范围
+                para_end_line = para_start_line + para.count('\n')
+                
+                # 增加上下文：包含前后段落的部分内容
+                enhanced_content = self._add_context(para, paragraphs, para_idx)
+                
+                chunk_id = self._generate_chunk_id(file_path, section_idx * 100 + para_idx, f"{section_title}_para{para_idx}")
+                
+                chunks.append(DocumentChunk(
+                    content=enhanced_content,
+                    metadata={
+                        "file_path": str(file_path),
+                        "chunk_type": "paragraph",
+                        "section_title": section_title,
+                        "paragraph_index": para_idx,
+                        "chunk_index": section_idx * 100 + para_idx,
+                        "start_line": para_start_line,
+                        "end_line": para_end_line,
+                        "file_type": self._get_file_type(file_path)
+                    },
+                    chunk_id=chunk_id
+                ))
+                
+                para_start_line = para_end_line + 2  # +2 for paragraph separator
+            
+            current_line += section.count('\n') + 1
+        
+        return chunks
+    
     def _generate_chunk_id(self, file_path: str, index: int, title: str) -> str:
         """生成chunk唯一ID"""
         content = f"{file_path}_{index}_{title}"
         return hashlib.md5(content.encode('utf-8')).hexdigest()
+    
+    def _add_context(self, main_para: str, all_paragraphs: list, para_idx: int, context_chars: int = 200) -> str:
+        """为段落添加上下文信息"""
+        result = main_para.strip()
+        
+        # 添加前文上下文
+        if para_idx > 0:
+            prev_para = all_paragraphs[para_idx - 1].strip()
+            if prev_para:
+                prev_context = prev_para[-context_chars:] if len(prev_para) > context_chars else prev_para
+                result = f"[上文]...{prev_context}\n\n{result}"
+        
+        # 添加后文上下文
+        if para_idx < len(all_paragraphs) - 1:
+            next_para = all_paragraphs[para_idx + 1].strip()
+            if next_para:
+                next_context = next_para[:context_chars] if len(next_para) > context_chars else next_para
+                result = f"{result}\n\n[下文]{next_context}..."
+        
+        return result
     
     def _get_file_type(self, file_path: str) -> str:
         """判断文件类型"""
@@ -221,7 +294,7 @@ class StoryRAGSystem:
             return "章节"
         return "其他"
     
-    def index_documents(self, force_reindex: bool = False, parallel_workers: int = 4, embedding_batch_size: int = 20):
+    def index_documents(self, force_reindex: bool = False, parallel_workers: int = 8, embedding_batch_size: int = 20):
         """
         索引所有文档
         
@@ -230,7 +303,19 @@ class StoryRAGSystem:
             parallel_workers: 并行处理线程数
             embedding_batch_size: embedding生成的批次大小
         """
-        if not force_reindex and self.collection.count() > 0:
+        if force_reindex:
+            # 强制重建时删除现有数据
+            try:
+                self.chroma_client.delete_collection("story_knowledge")
+                print("已删除现有索引数据")
+            except:
+                pass
+            # 重新创建collection
+            self.collection = self.chroma_client.get_or_create_collection(
+                name="story_knowledge",
+                metadata={"description": "GPT Story Maker knowledge base"}
+            )
+        elif self.collection.count() > 0:
             print(f"数据库已存在 {self.collection.count()} 个文档，使用 force_reindex=True 强制重建")
             return
         
@@ -281,10 +366,10 @@ class StoryRAGSystem:
                 
                 # 根据文件类型选择切片策略
                 file_type = self._get_file_type(file_path)
-                if file_type == "章节":
-                    chunks = self.chunk_by_paragraph(content, file_path)
-                else:
+                if file_type in ["设定", "支线"]:
                     chunks = self.chunk_by_section(content, file_path)
+                else:
+                    chunks = self.chunk_by_paragraph(content, file_path)
                 
                 all_chunks.extend(chunks)
                 
@@ -494,17 +579,48 @@ def main():
         results = rag.search_character(args.character, args.top_k)
         print(f"\n=== {args.character} 相关信息 ===")
         for i, result in enumerate(results, 1):
-            print(f"\n{i}. 来源: {result['metadata']['file_path']}")
-            print(f"   标题: {result['metadata'].get('section_title', 'N/A')}")
-            print(f"   内容: {result['content'][:200]}...")
+            metadata = result['metadata']
+            content = result['content']
+            
+            print(f"\n{i}. 来源: {metadata['file_path']}")
+            print(f"   标题: {metadata.get('section_title', 'N/A')}")
+            
+            # 显示行号信息（如果有）
+            if 'start_line' in metadata and 'end_line' in metadata:
+                print(f"   位置: 第{metadata['start_line']}-{metadata['end_line']}行")
+            
+            # 显示相似度分数（如果有）
+            if result.get('distance') is not None:
+                similarity = 1 - result['distance']
+                print(f"   相关度: {similarity:.3f}")
+            
+            print(f"   内容: {content}")
+            if len(content) > 1000:
+                print(f"   [内容较长，已完整显示 {len(content)} 字符]")
     
     elif args.query:
         results = rag.search(args.query, args.top_k)
         print(f"\n=== 搜索: {args.query} ===")
         for i, result in enumerate(results, 1):
-            print(f"\n{i}. 来源: {result['metadata']['file_path']}")
-            print(f"   类型: {result['metadata'].get('file_type', 'N/A')}")
-            print(f"   内容: {result['content'][:200]}...")
+            metadata = result['metadata']
+            content = result['content']
+            
+            print(f"\n{i}. 来源: {metadata['file_path']}")
+            print(f"   类型: {metadata.get('file_type', 'N/A')}")
+            print(f"   章节: {metadata.get('section_title', 'N/A')}")
+            
+            # 显示行号信息（如果有）
+            if 'start_line' in metadata and 'end_line' in metadata:
+                print(f"   位置: 第{metadata['start_line']}-{metadata['end_line']}行")
+            
+            # 显示相似度分数（如果有）
+            if result.get('distance') is not None:
+                similarity = 1 - result['distance']  # 转换为相似度分数
+                print(f"   相关度: {similarity:.3f}")
+            
+            print(f"   内容: {content}")
+            if len(content) > 1000:
+                print(f"   [内容较长，已完整显示 {len(content)} 字符]")
     
     else:
         print("请指定操作: --index, --query 或 --character")

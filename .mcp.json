@@ -1,10 +1,8 @@
 {
   "mcpServers": {
     "story-rag": {
-      "type": "stdio",
-      "command": "uv",
-      "args": ["run","--project" ,"tools", "tools/story_rag_mcp.py"],
-      "env": {}
+      "type": "http",
+      "url": "http://127.0.0.1:5555/mcp"
     }
   }
 }

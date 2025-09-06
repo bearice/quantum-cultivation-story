@@ -94,11 +94,11 @@ context = rag.get_context_for_chapter(volume=1, chapter=5)
 
 ```bash
 # 强制重建索引（文档更新后）
-uv run --project tools story_rag_system.py --index
+uv run --project tools tools/story_rag_system.py --index
 
 # 清空数据库重新开始
 rm -rf chroma_db/
-uv run --project tools story_rag_system.py --index
+uv run --project tools tools/story_rag_system.py --index
 ```
 
 ## 常见查询模式
