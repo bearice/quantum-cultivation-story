@@ -12,154 +12,141 @@ import logging
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 from pathlib import Path
+from flask import Flask, request, jsonify
 
-# 设置编码
-if sys.platform == "win32":
-    os.environ['PYTHONIOENCODING'] = 'utf-8'
-
+from story_rag_system import StoryRAGSystem
 # 设置详细日志
-logging.basicConfig(
-    level=logging.DEBUG,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler('story_rag_debug.log', encoding='utf-8'),
-        logging.StreamHandler(sys.stderr)
-    ]
-)
 logger = logging.getLogger(__name__)
-
-try:
-    from flask import Flask, request, jsonify
-except ImportError:
-    logger.error("Flask not installed. Installing...")
-    os.system("uv add flask")
-    from flask import Flask, request, jsonify
-
-try:
-    from story_rag_system import StoryRAGSystem
-    logger.info("Successfully imported StoryRAGSystem")
-except ImportError as e:
-    logger.error(f"Failed to import StoryRAGSystem: {e}")
-    # 创建dummy实现
-    class StoryRAGSystem:
-        def __init__(self, project_root="."):
-            logger.warning("Using dummy StoryRAGSystem")
-            self.project_root = project_root
-            
-        def search(self, query, top_k=5, filter_type=None):
-            logger.info(f"Dummy search: query={query}, top_k={top_k}, filter_type={filter_type}")
-            return [{"content": "Dummy result", "metadata": {"file_path": "dummy"}}]
-        
-        def search_character(self, character_name, top_k=3):
-            logger.info(f"Dummy character search: {character_name}")
-            return [{"content": f"Dummy character info for {character_name}", "metadata": {"file_path": "dummy"}}]
-        
-        def search_plot_thread(self, thread_keyword, top_k=5):
-            logger.info(f"Dummy plot search: {thread_keyword}")
-            return [{"content": f"Dummy plot info for {thread_keyword}", "metadata": {"file_path": "dummy"}}]
+logger.info("Successfully imported StoryRAGSystem")
 
 app = Flask(__name__)
 
 class StoryRAGHTTP:
     def __init__(self):
+        """直接初始化RAG系统"""
         logger.info("Initializing StoryRAGHTTP...")
-        self.rag = None
-        self.project_root = self._get_project_root()
-        logger.info(f"Project root: {self.project_root}")
-    
-    def _get_project_root(self):
-        """获取项目根目录"""
-        current = Path.cwd()
-        logger.debug(f"Current working directory: {current}")
-        
-        if current.name == 'tools':
-            root = current.parent
-        else:
-            root = current
-            
-        logger.info(f"Using project root: {root}")
-        return str(root)
+        logger.info("Initializing RAG system...")
+        start_time = datetime.now()
+        self.rag = StoryRAGSystem()  # 使用配置文件中的路径
+        end_time = datetime.now()
+        logger.info(f"RAG system initialized successfully in {end_time - start_time}")
     
     def _get_rag(self):
-        """延迟初始化RAG系统"""
-        if self.rag is None:
-            logger.info("Initializing RAG system...")
-            try:
-                start_time = datetime.now()
-                self.rag = StoryRAGSystem(project_root=self.project_root)
-                end_time = datetime.now()
-                logger.info(f"RAG system initialized successfully in {end_time - start_time}")
-            except Exception as e:
-                logger.error(f"Failed to initialize RAG system: {e}")
-                logger.error(f"Traceback: {traceback.format_exc()}")
-                raise
+        """获取RAG实例"""
         return self.rag
     
     def search_story_knowledge(self, query: str, top_k: int = 5, filter_type: Optional[str] = None):
         """搜索故事知识库"""
         logger.info(f"Searching story knowledge: query='{query}', top_k={top_k}, filter_type={filter_type}")
         
-        try:
-            start_time = datetime.now()
-            rag = self._get_rag()
-            init_time = datetime.now()
-            logger.debug(f"RAG initialization took: {init_time - start_time}")
-            
-            results = rag.search(query, top_k=top_k, filter_type=filter_type)
-            search_time = datetime.now()
-            logger.debug(f"Search took: {search_time - init_time}")
-            
-            logger.info(f"Found {len(results)} results")
-            for i, result in enumerate(results[:2]):  # 只记录前2个结果避免日志过长
-                logger.debug(f"Result {i}: {result['metadata'].get('file_path', 'unknown')} - {len(result['content'])} chars")
-            
-            formatted = self._format_results(results)
-            format_time = datetime.now()
-            logger.debug(f"Formatting took: {format_time - search_time}")
-            
-            return {
-                "success": True,
-                "query": query,
-                "results": formatted,
-                "total_found": len(results),
-                "timing": {
-                    "init_ms": (init_time - start_time).total_seconds() * 1000,
-                    "search_ms": (search_time - init_time).total_seconds() * 1000,
-                    "format_ms": (format_time - search_time).total_seconds() * 1000
-                }
-            }
-            
-        except Exception as e:
-            logger.error(f"Search failed: {e}")
-            logger.error(f"Traceback: {traceback.format_exc()}")
-            return {
-                "success": False,
-                "error": str(e),
-                "traceback": traceback.format_exc(),
-                "query": query,
-                "results": []
-            }
-    
-    def _format_results(self, results):
-        """格式化搜索结果"""
-        logger.debug(f"Formatting {len(results)} results...")
-        formatted = []
-        for result in results:
-            try:
-                formatted_result = {
-                    "file_path": result["metadata"]["file_path"],
-                    "section_title": result["metadata"].get("section_title", ""),
-                    "file_type": result["metadata"].get("file_type", ""),
-                    "content": result["content"][:500] + "..." if len(result["content"]) > 500 else result["content"],  # 截断长内容
-                    "content_length": len(result["content"]),
-                    "relevance_score": 1.0 - result.get("distance", 0.0) if "distance" in result else 1.0
-                }
-                formatted.append(formatted_result)
-            except Exception as e:
-                logger.error(f"Error formatting result: {e}")
-                formatted.append({"error": str(e), "raw_result": str(result)})
+        start_time = datetime.now()
+        rag = self._get_rag()
         
-        return formatted
+        results = rag.search(query, top_k=top_k, filter_type=filter_type)
+        search_time = datetime.now()
+        logger.debug(f"Search took: {search_time - start_time}")
+        
+        logger.info(f"Found {len(results)} results")
+        for i, result in enumerate(results[:2]):  # 只记录前2个结果避免日志过长
+            logger.debug(f"Result {i}: {result['metadata'].get('file_path', 'unknown')} - {len(result['content'])} chars")
+        
+        formatted = rag.format_search_results(results)
+        # 为HTTP服务截断长内容
+        for result in formatted:
+            if len(result["content"]) > 500:
+                result["content"] = result["content"][:500] + "..."
+                result["content_truncated"] = True
+            else:
+                result["content_truncated"] = False
+            result["content_length"] = len(result.get("content", ""))
+        
+        format_time = datetime.now()
+        logger.debug(f"Formatting took: {format_time - search_time}")
+        
+        return {
+            "success": True,
+            "query": query,
+            "results": formatted,
+            "total_found": len(results),
+            "timing": {
+                "search_ms": (search_time - start_time).total_seconds() * 1000,
+                "format_ms": (format_time - search_time).total_seconds() * 1000
+            }
+        }
+    
+    def search_character_info(self, character_name: str, top_k: int = 3):
+        """搜索角色信息 - 使用 base 类的专门实现"""
+        logger.info(f"Searching character info: character_name='{character_name}', top_k={top_k}")
+        
+        start_time = datetime.now()
+        rag = self._get_rag()
+        
+        results = rag.search_character(character_name, top_k=top_k)
+        search_time = datetime.now()
+        logger.debug(f"Character search took: {search_time - start_time}")
+        
+        logger.info(f"Found {len(results)} character results")
+        
+        formatted = rag.format_search_results(results)
+        # 为HTTP服务截断长内容
+        for result in formatted:
+            if len(result["content"]) > 500:
+                result["content"] = result["content"][:500] + "..."
+                result["content_truncated"] = True
+            else:
+                result["content_truncated"] = False
+            result["content_length"] = len(result.get("content", ""))
+        
+        format_time = datetime.now()
+        logger.debug(f"Formatting took: {format_time - search_time}")
+        
+        return {
+            "success": True,
+            "character": character_name,
+            "results": formatted,
+            "total_found": len(results),
+            "timing": {
+                "search_ms": (search_time - start_time).total_seconds() * 1000,
+                "format_ms": (format_time - search_time).total_seconds() * 1000
+            }
+        }
+    
+    def search_plot_threads(self, thread_keyword: str, top_k: int = 5):
+        """搜索剧情线索 - 使用 base 类的专门实现"""
+        logger.info(f"Searching plot threads: thread_keyword='{thread_keyword}', top_k={top_k}")
+        
+        start_time = datetime.now()
+        rag = self._get_rag()
+        
+        results = rag.search_plot_thread(thread_keyword, top_k=top_k)
+        search_time = datetime.now()
+        logger.debug(f"Plot thread search took: {search_time - start_time}")
+        
+        logger.info(f"Found {len(results)} plot thread results")
+        
+        formatted = rag.format_search_results(results)
+        # 为HTTP服务截断长内容
+        for result in formatted:
+            if len(result["content"]) > 500:
+                result["content"] = result["content"][:500] + "..."
+                result["content_truncated"] = True
+            else:
+                result["content_truncated"] = False
+            result["content_length"] = len(result.get("content", ""))
+        
+        format_time = datetime.now()
+        logger.debug(f"Formatting took: {format_time - search_time}")
+        
+        return {
+            "success": True,
+            "thread_keyword": thread_keyword,
+            "results": formatted,
+            "total_found": len(results),
+            "timing": {
+                "search_ms": (search_time - start_time).total_seconds() * 1000,
+                "format_ms": (format_time - search_time).total_seconds() * 1000
+            }
+        }
 
 def format_search_results_text(result, tool_name, arguments):
     """格式化搜索结果为文本"""
@@ -211,7 +198,7 @@ def health():
     return jsonify({
         "status": "ok",
         "timestamp": datetime.now().isoformat(),
-        "project_root": rag_server.project_root
+        "project_root": str(rag_server.rag.project_root)
     })
 
 @app.route('/mcp', methods=['POST'])
@@ -324,16 +311,14 @@ def mcp_endpoint():
                     arguments.get("filter_type")
                 )
             elif tool_name == "search_character_info":
-                result = rag_server.search_story_knowledge(
+                result = rag_server.search_character_info(
                     arguments.get("character_name", ""),
-                    arguments.get("top_k", 3),
-                    "设定"
+                    arguments.get("top_k", 3)
                 )
             elif tool_name == "search_plot_threads":
-                result = rag_server.search_story_knowledge(
+                result = rag_server.search_plot_threads(
                     arguments.get("thread_keyword", ""),
-                    arguments.get("top_k", 5),
-                    "设定"
+                    arguments.get("top_k", 5)
                 )
             else:
                 return jsonify({
@@ -410,8 +395,8 @@ def debug():
     logger.info("Debug info requested")
     
     debug_info = {
-        "project_root": rag_server.project_root,
-        "rag_initialized": rag_server.rag is not None,
+        "project_root": str(rag_server.rag.project_root),
+        "rag_initialized": True,
         "working_directory": os.getcwd(),
         "python_path": sys.path[:3],  # 只显示前3个路径
         "environment": {
@@ -420,7 +405,7 @@ def debug():
         }
     }
     
-    # 尝试初始化RAG并获取更多信息
+    # 获取更多RAG信息
     try:
         rag = rag_server._get_rag()
         debug_info["rag_status"] = "initialized"
@@ -439,6 +424,15 @@ def debug():
     return jsonify(debug_info)
 
 if __name__ == "__main__":
+    # 强制UTF-8编码
+    if sys.platform == "win32":
+        os.environ['PYTHONIOENCODING'] = 'utf-8'
+        import codecs
+        if hasattr(sys.stdout, 'buffer'):
+            sys.stdout = codecs.getwriter('utf-8')(sys.stdout.buffer)
+        if hasattr(sys.stderr, 'buffer'):
+            sys.stderr = codecs.getwriter('utf-8')(sys.stderr.buffer)
+    
     logger.info("Starting Story RAG HTTP Server...")
     logger.info(f"Current working directory: {os.getcwd()}")
     logger.info(f"Python path: {sys.path[:5]}")

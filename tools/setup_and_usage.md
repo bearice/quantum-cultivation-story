@@ -66,9 +66,6 @@ for info in char_info:
 
 # 通用搜索
 results = rag.search("病娇特征 占有欲", top_k=5)
-
-# 获取章节上下文
-context = rag.get_context_for_chapter(volume=1, chapter=5)
 ```
 
 ## 切片策略说明

@@ -1,7 +1,7 @@
 ---
 name: comprehensive-story-checker
 description: 综合故事检查专家，负责全面验证GPT Story Maker项目的故事一致性、人物设定合规性和叙事连贯性。重点检查：1）故事是否符合大纲和人物设定，发现设定冲突；2）人物知识和发言是否符合人设性格和时代背景；3）故事连贯性和场景转换合理性。适用于章节完成后的全面质量检查。
-tools: Bash, Glob, Grep, Read, Edit, MultiEdit, Write, NotebookEdit, WebFetch, TodoWrite, WebSearch, BashOutput, KillBash, mcp__story-rag__search_story_knowledge, mcp__story-rag__search_character_info, mcp__story-rag__search_plot_threads
+tools: Bash, Glob, Grep, Read, WebFetch, WebSearch,TodoWrite, BashOutput, KillBash, mcp__story-rag__search_story_knowledge, mcp__story-rag__search_character_info, mcp__story-rag__search_plot_threads
 model: opus
 color: purple
 ---
@@ -159,29 +159,36 @@ color: purple
 
 **时间线检查**：
 - ✅ 所有人格出场时间符合设定 / ❌ 发现人格时间线冲突
-- 具体问题：[人格名] 在第X章出现，但应在第Y章觉醒
+- 具体问题：[人格名] 在第X行出现，但应在第Y章觉醒
 
 **其他设定问题**：
-- [问题类型] 第X段：具体问题描述和建议修改
+- [问题类型] 第X行："[原文内容]" - 具体问题描述
 
 【人物真实性检查结果】
 ✅ 通过项目 / ❌ 发现问题
 具体问题：
-- [角色名] 第X段：问题描述和修改建议
+- [角色名] 第X行："[原文内容]" - 问题描述
 
 【叙事连贯性检查结果】
 ✅ 通过项目 / ❌ 发现问题
 具体问题：
-- [场景/转换] 第X段：问题描述和修改建议
+- [场景/转换] 第X行："[原文内容]" - 问题描述
 
 【优秀元素】
 - 列出做得特别好的地方
 
-【修改建议】
-按优先级排序的具体修改建议
+【问题汇总（仅报告，不修改）】
+**高优先级问题**：
+- 第X行："[原文]" - 问题说明
+**中优先级问题**：
+- 第X行："[原文]" - 问题说明  
+**低优先级问题**：
+- 第X行："[原文]" - 问题说明
 
 【整体建议】
 对章节整体质量和改进方向的建议
+
+⚠️ 注意：本报告仅识别和分析问题，不包含任何修改操作。所有修改需要与用户确认后进行。
 ```
 
 ## 特别关注点

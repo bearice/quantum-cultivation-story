@@ -136,4 +136,27 @@ This is a pure creative writing project with no executable code. When working wi
 - **Chapter Requirements**: Minimum 2000 characters, avoid unnecessary metadata
 - **Title Diversity**: Avoid repetitive "XX的XX" format, use varied styles
 
-**Before any writing/editing task**: Read 设定/写作规范.md for latest standards
+## Chapter Writing Workflow
+
+**⚠️ MANDATORY DOCUMENT CHECK ORDER** when writing any chapters:
+
+### Essential Documents (Must Check First):
+1. **设定/写作规范.md** - PRIMARY authority for all writing standards, language rules, character dialogue formats
+2. **设定/大纲.md** - Core world-building, character settings, and overall plot structure  
+3. **Vol[X]/第[X]卷详细剧情设计.md** - Specific detailed plot design for that volume (TAKES PRECEDENCE over general outline)
+4. **设定/伏笔追踪表.md** - Track what foreshadowing has been set up and what needs to be resolved
+
+### Supporting Documents:
+5. **设定/人格图鉴.md** - Character personality profiles and awakening timelines
+6. **Previous chapters** - Understand current story state and character knowledge
+7. **设定/人物档案.md** - Character development tracking
+8. **设定/背景势力设定.md** - Faction relationships if relevant
+
+### Critical Rules:
+- **NEVER** assume plot details from the general outline alone
+- **ALWAYS** check if there's a specific detailed plot design file first
+- **ALWAYS** verify character awakening timelines and current knowledge states
+- **ALWAYS** follow 写作规范.md for language, format, and style requirements
+- **The detailed plot design takes precedence over the general outline** for specific chapter content
+
+**Before any writing/editing task**: Complete the full document check workflow above

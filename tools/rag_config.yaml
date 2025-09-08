@@ -1,0 +1,119 @@
+# RAG System Configuration
+# 故事创作 RAG 系统配置文件
+
+# 模型配置
+models:
+  # Embedding 模型
+  embedding:
+    model_name: "dengcao/Qwen3-Embedding-8B:Q5_K_M"
+    embedding_dim: 4096
+    
+  # Reranker 模型
+  reranker:
+    enabled: false
+    model_name: "dengcao/Qwen3-Reranker-8B:Q5_K_M"
+    # Rerank 时返回的最大结果数
+    max_results: 10
+    # Rerank 分数阈值（低于此分数的结果将被过滤）
+    score_threshold: 0.5
+
+# 路径配置
+paths:
+  # 文档根目录（相对于配置文件或绝对路径）
+  docs_root: "C:\\Users\\bearice\\Workspace\\gpt-story-maker"
+  # 向量数据库存储路径
+  db_path: "C:\\Users\\bearice\\Workspace\\gpt-story-maker\\chroma_db"
+
+# 向量数据库配置
+vectordb:
+  # Collection 名称
+  collection_name: "story_knowledge"
+  # 是否持久化
+  persistent: true
+
+# 文档处理配置
+document_processing:
+  # 并行处理线程数
+  parallel_workers: 8
+  # Embedding 批处理大小
+  embedding_batch_size: 20
+  # 存储批处理大小
+  storage_batch_size: 50
+  
+  # 文档类型配置
+  doc_types:
+    设定:
+      path_patterns:
+        - "设定/*.md"
+      chunk_strategy: "by_section"
+      priority: 1
+      
+    章节:
+      path_patterns:
+        - "Vol*/*.md"
+      chunk_strategy: "by_paragraph"
+      priority: 2
+      
+    支线:
+      path_patterns:
+        - "设定/跨卷支线剧情设计/*.md"
+      chunk_strategy: "by_section"
+      priority: 1
+
+  # 切片配置
+  chunking:
+    # 最小切片长度（字符）
+    min_chunk_size: 10
+    # 最大切片长度（字符）
+    max_chunk_size: 2000
+    # 段落上下文字符数
+    context_chars: 200
+    # 是否添加上下文
+    add_context: true
+
+# 搜索配置
+search:
+  # 默认返回结果数
+  default_top_k: 5
+  # 最大返回结果数
+  max_top_k: 20
+  # 是否启用 rerank (使用高效的stored embeddings方案)
+  enable_rerank: true
+  # 角色搜索配置
+  character_search:
+    # 搜索变体扩展
+    expand_variants: true
+    # 默认返回结果数
+    default_top_k: 3
+
+# 系统配置
+system:
+  # 日志级别
+  log_level: "INFO"
+  # 是否启用调试模式
+  debug: false
+  # 忽略的文件路径模式
+  ignore_patterns:
+    - ".venv"
+    - ".env"
+    - "venv"
+    - "env"
+    - "__pycache__"
+    - ".git"
+    - "node_modules"
+    - "site-packages"
+    - "dist-info"
+    - ".uv"
+    - ".idea"
+    - ".vscode"
+
+# HTTP 服务配置（用于 story_rag_http.py）
+http_server:
+  host: "127.0.0.1"
+  port: 8080
+  debug: false
+
+# MCP 服务配置（用于 story_rag_mcp.py）
+mcp_server:
+  # MCP 特定配置
+  buffer_size: 65536
