@@ -3,7 +3,24 @@
     "allow": [
       "mcp__story-rag__search_plot_threads",
       "mcp__story-rag__search_story_knowledge",
-      "mcp__story-rag__search_character_info"
+      "mcp__story-rag__search_character_info",
+      "Bash(python test:*)",
+      "mcp__story-data-manager__list_all_data",
+      "mcp__story-data-manager__simple_test",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebSearch",
+      "WebFetch(domain:scrapfly.io)",
+      "mcp__story-data-manager__create_personality",
+      "mcp__story-data-manager__update_character",
+      "mcp__story-data-manager__query_personality",
+      "mcp__story-data-manager__delete_personality",
+      "mcp__story-data-manager__export_data",
+      "mcp__story-data-manager__create_character",
+      "mcp__story-data-manager__search_story_data",
+      "mcp__story-data-manager__render_documentation",
+      "mcp__story-data-manager__ask_story_question",
+      "mcp__story-data-manager__get_qa_system_status",
+      "mcp__story-data-manager__search_character_info"
     ],
     "deny": [],
     "ask": []

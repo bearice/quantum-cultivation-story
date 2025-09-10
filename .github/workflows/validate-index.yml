@@ -1,0 +1,64 @@
+name: Validate Content Index
+
+on:
+  pull_request:
+    paths:
+      - '设定/**/*.md'
+  push:
+    branches: [ master, main ]
+    paths:
+      - '设定/**/*.md'
+
+jobs:
+  validate-index:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+    
+    - name: Generate fresh index
+      run: python tools/generate_index.py
+    
+    - name: Check if index is current
+      run: |
+        if git diff --exit-code 设定/内容索引.md; then
+          echo "✅ Content index is up to date"
+        else
+          echo "❌ Content index is outdated"
+          echo "Please run 'python tools/generate_index.py' and commit the changes"
+          echo ""
+          echo "Differences found:"
+          git diff 设定/内容索引.md
+          exit 1
+        fi
+    
+    - name: Validate index structure
+      run: |
+        if [ -f "设定/内容索引.md" ]; then
+          echo "✅ Content index file exists"
+          
+          # Check if TOC section exists
+          if grep -q "^# TOC" 设定/内容索引.md; then
+            echo "✅ TOC section found"
+          else
+            echo "❌ TOC section missing"
+            exit 1
+          fi
+          
+          # Check if file sections exist
+          if grep -q "^# 设定/" 设定/内容索引.md; then
+            echo "✅ File sections found"
+          else
+            echo "❌ File sections missing"
+            exit 1
+          fi
+          
+        else
+          echo "❌ Content index file missing"
+          exit 1
+        fi

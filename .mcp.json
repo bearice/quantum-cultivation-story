@@ -1,8 +1,8 @@
 {
   "mcpServers": {
-    "story-rag": {
-      "type": "http",
-      "url": "http://127.0.0.1:5555/mcp"
+    "story-data-manager": {
+      "type": "sse",
+      "url": "http://localhost:8000/sse"
     }
   }
 }
