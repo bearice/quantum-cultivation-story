@@ -36,12 +36,16 @@ Key personalities: Lin Wanwan (Original), System 009, and 42 parallel personalit
 
 ## Document Hierarchy and Management
 
+**📊 完整文档架构请参考：`设定/文档层级关系.md`**
+
 **Authority Structure** (order of precedence):
 1. **设定/写作规范.md** - PRIMARY writing standards and style authority
-2. **设定/大纲.md** - Master outline (plot/setting conflicts)
-3. **设定/内容索引.md** - Navigation index for all settings
-4. **设定/Vol[X]/第[X]卷详细剧情设计.md** - Volume-specific detailed plots
-5. **Other 设定/ files** - Supporting character, faction, and tracking data
+2. **设定/人格设定统一规范.md** - Character personality settings authority (NEW)
+3. **设定/章节创作检查清单模板.md** - Creation workflow authority (UPDATED)
+4. **设定/大纲.md** - Master outline (plot/setting conflicts)
+5. **设定/Vol[X]/第[X]卷详细剧情设计.md** - Volume-specific detailed plots (highest priority for specific chapters)
+6. **设定/内容索引.md** - Navigation index for all settings (auto-generated)
+7. **Other 设定/ files** - Supporting character, faction, and tracking data
 
 **Document Index System**:
 - **设定/内容索引.md** - Master content index for precise navigation
@@ -55,8 +59,9 @@ Key personalities: Lin Wanwan (Original), System 009, and 42 parallel personalit
 **Critical Workflow Rules**:
 - Always check `设定/内容索引.md` first for document navigation  
 - Use Read tool with specific line numbers for precise content extraction
-- New personality additions → update both 人格图鉴.md and 伏笔追踪表.md
-- Follow authority structure order for resolving conflicts
+- **人格设定变更** → 必须先在 `设定/人格设定统一规范.md` 完成，然后同步其他相关文档
+- **Follow authority structure order** for resolving conflicts (详见 `设定/文档层级关系.md`)
+- **文档层级关系** → 参考 `设定/文档层级关系.md` 了解完整的主从关系和更新流程
 
 ## Key Story Mechanics
 

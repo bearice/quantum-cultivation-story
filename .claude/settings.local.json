@@ -20,7 +20,8 @@
       "mcp__story-data-manager__render_documentation",
       "mcp__story-data-manager__ask_story_question",
       "mcp__story-data-manager__get_qa_system_status",
-      "mcp__story-data-manager__search_character_info"
+      "mcp__story-data-manager__search_character_info",
+      "Bash(python:*)"
     ],
     "deny": [],
     "ask": []

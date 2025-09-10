@@ -1,8 +1,4 @@
 {
   "mcpServers": {
-    "story-data-manager": {
-      "type": "sse",
-      "url": "http://localhost:8000/sse"
-    }
   }
 }
