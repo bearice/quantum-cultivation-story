@@ -40,7 +40,7 @@ Key personalities: Lin Wanwan (Original), System 009, and 42 parallel personalit
 1. **设定/写作规范.md** - PRIMARY writing standards and style authority
 2. **设定/大纲.md** - Master outline (plot/setting conflicts)
 3. **设定/内容索引.md** - Navigation index for all settings
-4. **Vol[X]/第[X]卷详细剧情设计.md** - Volume-specific detailed plots
+4. **设定/Vol[X]/第[X]卷详细剧情设计.md** - Volume-specific detailed plots
 5. **Other 设定/ files** - Supporting character, faction, and tracking data
 
 **Document Index System**:
@@ -123,7 +123,7 @@ Key formats: 系统009【dialogue】, Chinese numerals for personalities (小一
 ### Pre-Writing Validation
 1. **设定/内容索引.md** → locate relevant documents
 2. **设定/写作规范.md** → confirm current standards  
-3. **Vol[X]/第[X]卷详细剧情设计.md** → specific plot (takes precedence)
+3. **设定/Vol[X]/第[X]卷详细剧情设计.md** → specific plot (takes precedence)
 4. **设定/章节创作检查清单模板.md** → systematic validation
 5. Previous chapters → current story state
 
