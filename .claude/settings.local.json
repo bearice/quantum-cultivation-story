@@ -21,7 +21,9 @@
       "mcp__story-data-manager__ask_story_question",
       "mcp__story-data-manager__get_qa_system_status",
       "mcp__story-data-manager__search_character_info",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "mcp__ide__executeCode",
+      "Bash(wc:*)"
     ],
     "deny": [],
     "ask": []
