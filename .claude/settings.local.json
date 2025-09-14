@@ -31,5 +31,6 @@
   "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "story-rag"
-  ]
+  ],
+  "outputStyle": "default"
 }
